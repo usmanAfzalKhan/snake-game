@@ -1,5 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './SnakeGame.css';
+
+import pauseIcon from '../images/pause.png';
+import resumeIcon from '../images/resume.png';
+import restartIcon from '../images/restart.png';
 
 const BOARD_SIZE = 20;
 const SPEED = 120;
@@ -11,6 +15,7 @@ const SnakeGame = () => {
   const [foodState, setFoodState] = useState(INITIAL_FOOD);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
 
   const snakeRef = useRef(INITIAL_SNAKE);
   const foodRef = useRef(INITIAL_FOOD);
@@ -48,7 +53,7 @@ const SnakeGame = () => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const moveSnake = () => {
+  const moveSnake = useCallback(() => {
     const snake = [...snakeRef.current];
     const food = foodRef.current;
 
@@ -102,20 +107,23 @@ const SnakeGame = () => {
       foodRef.current = newFood;
       setFoodState(newFood);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (isRunning) {
       intervalRef.current = setInterval(moveSnake, SPEED);
     }
     return () => clearInterval(intervalRef.current);
-  }, [isRunning]);
+  }, [isRunning, moveSnake]);
 
   const toggleGame = () => {
     if (isGameOver) {
       resetGame();
     }
-    setIsRunning(prev => !prev);
+    setIsRunning(prev => {
+      if (!hasStarted) setHasStarted(true);
+      return !prev;
+    });
   };
 
   const resetGame = () => {
@@ -126,6 +134,7 @@ const SnakeGame = () => {
     setSnakeState(freshSnake);
     setFoodState(freshFood);
     setIsRunning(false);
+    setHasStarted(false);
 
     snakeRef.current = freshSnake;
     foodRef.current = freshFood;
@@ -139,10 +148,11 @@ const SnakeGame = () => {
       for (let col = 0; col < BOARD_SIZE; col++) {
         const isSnake = snakeState.some(([r, c]) => r === row && c === col);
         const isFood = foodState[0] === row && foodState[1] === col;
+        const isEven = (row + col) % 2 === 0;
         grid.push(
           <div
             key={`${row}-${col}`}
-            className={`cell ${isSnake ? 'snake' : ''} ${isFood ? 'food' : ''}`}
+            className={`cell ${isEven ? 'light-cell' : 'dark-cell'} ${isSnake ? 'snake' : ''} ${isFood ? 'food' : ''}`}
           />
         );
       }
@@ -152,18 +162,24 @@ const SnakeGame = () => {
 
   return (
     <div className="snake-container">
+      <h2 style={{ marginBottom: '5px' }}>Welcome to Snake Game</h2>
+      <div className="controls-under-header" style={{ marginBottom: '2px' }}>
+        <img
+          src={isRunning ? pauseIcon : resumeIcon}
+          alt={isRunning ? 'Pause' : 'Resume'}
+          className="control-icon"
+          onClick={toggleGame}
+        />
+        {hasStarted && (
+          <img
+            src={restartIcon}
+            alt="Restart"
+            className="control-icon"
+            onClick={resetGame}
+          />
+        )}
+      </div>
       <div className="board-wrapper">
-        <div className="game-ui-top-right">
-          <span
-            className="game-icon"
-            role="button"
-            tabIndex={0}
-            onClick={toggleGame}
-            onKeyDown={(e) => e.key === 'Enter' && toggleGame()}
-          >
-            {isRunning ? '⏸️' : '▶️'}
-          </span>
-        </div>
         <div className="board">
           {renderBoard()}
           {isGameOver && <div className="game-over-message">Game Over!</div>}
