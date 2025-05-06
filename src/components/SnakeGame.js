@@ -111,6 +111,13 @@ const SnakeGame = () => {
     return () => clearInterval(intervalRef.current);
   }, [isRunning]);
 
+  const toggleGame = () => {
+    if (isGameOver) {
+      resetGame();
+    }
+    setIsRunning(prev => !prev);
+  };
+
   const resetGame = () => {
     const freshSnake = [[10, 10]];
     const freshFood = [5, 5];
@@ -145,13 +152,22 @@ const SnakeGame = () => {
 
   return (
     <div className="snake-container">
-      <div className="board">{renderBoard()}</div>
-      {isGameOver && <p className="game-over">Game Over!</p>}
-      <div className="game-controls">
-        <button onClick={() => setIsRunning(prev => !prev)}>
-          {isRunning ? 'Pause' : 'Start'}
-        </button>
-        <button onClick={resetGame}>Reset</button>
+      <div className="board-wrapper">
+        <div className="game-ui-top-right">
+          <span
+            className="game-icon"
+            role="button"
+            tabIndex={0}
+            onClick={toggleGame}
+            onKeyDown={(e) => e.key === 'Enter' && toggleGame()}
+          >
+            {isRunning ? '⏸️' : '▶️'}
+          </span>
+        </div>
+        <div className="board">
+          {renderBoard()}
+          {isGameOver && <div className="game-over-message">Game Over!</div>}
+        </div>
       </div>
     </div>
   );
