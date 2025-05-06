@@ -52,7 +52,6 @@ const SnakeGame = () => {
     const snake = [...snakeRef.current];
     const food = foodRef.current;
 
-    // Apply queued direction if valid
     if (directionQueueRef.current.length > 0) {
       const nextDir = directionQueueRef.current.shift();
       if (!isOpposite(directionRef.current, nextDir)) {
@@ -71,6 +70,13 @@ const SnakeGame = () => {
     }
 
     if (head[0] < 0 || head[0] >= BOARD_SIZE || head[1] < 0 || head[1] >= BOARD_SIZE) {
+      clearInterval(intervalRef.current);
+      setIsGameOver(true);
+      setIsRunning(false);
+      return;
+    }
+
+    if (snake.some(([r, c]) => r === head[0] && c === head[1])) {
       clearInterval(intervalRef.current);
       setIsGameOver(true);
       setIsRunning(false);
