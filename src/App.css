@@ -36,3 +36,31 @@
     transform: rotate(360deg);
   }
 }
+
+/* src/App.css */
+body {
+  margin: 0;
+  padding: 0;
+  background-image: url('./images/background.png');
+  background-repeat: repeat;
+  background-size: 128px 128px; /* or try auto */
+  background-color: #0d0d0d;
+  color: white;
+  font-family: 'Courier New', monospace;
+  image-rendering: pixelated;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+}

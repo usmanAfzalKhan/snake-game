@@ -1,8 +1,16 @@
+import Header from './components/Header';
+import Footer from './components/Footer';
+import Login from './pages/Login';
+import './App.css';
+
 function App() {
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>Welcome to Snake Game 🐍</h1>
-      <p>Game page coming soon!</p>
+    <div className="app-container">
+      <Header />
+      <main className="main-content">
+        <Login />
+      </main>
+      <Footer />
     </div>
   );
 }
