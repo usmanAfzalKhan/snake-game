@@ -1,49 +1,10 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* src/App.css */
+/* Reset & base */
 body {
   margin: 0;
   padding: 0;
   background-image: url('./images/background.png');
   background-repeat: repeat;
-  background-size: 128px 128px; /* or try auto */
+  background-size: 128px 128px;
   background-color: #0d0d0d;
   color: white;
   font-family: 'Courier New', monospace;
@@ -63,4 +24,9 @@ html, body, #root {
 
 .main-content {
   flex: 1;
+}
+
+.game-container {
+  text-align: center;
+  margin-top: 50px;
 }
