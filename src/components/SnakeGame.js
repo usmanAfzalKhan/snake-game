@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo
+} from 'react';
 import './SnakeGame.css';
 
 import pauseIcon from '../images/pause.png';
@@ -6,7 +12,7 @@ import resumeIcon from '../images/resume.png';
 import restartIcon from '../images/restart.png';
 
 const BOARD_SIZE = 20;
-const SPEED = 90; // Faster for smoother feel
+const SPEED = 120;
 const INITIAL_SNAKE = [[10, 10]];
 const INITIAL_FOOD = [5, 5];
 
@@ -16,19 +22,32 @@ const SnakeGame = () => {
   const [isGameOver, setIsGameOver] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
+  const [soundOn, setSoundOn] = useState(true);
   const [score, setScore] = useState(0);
 
   const snakeRef = useRef(INITIAL_SNAKE);
   const foodRef = useRef(INITIAL_FOOD);
   const directionRef = useRef('RIGHT');
   const directionQueueRef = useRef([]);
-  const lastMoveTimeRef = useRef(0);
+  const lastMoveTimeRef = useRef(performance.now());
+  const requestRef = useRef(null);
 
-  const isOpposite = (dir1, dir2) =>
+  const eatSound = useRef(new Audio(require('../images/eat.mp3')));
+  const gameOverSound = useRef(new Audio(require('../images/gameover.mp3')));
+  const collisionSound = useRef(new Audio(require('../images/collision.mp3')));
+
+  useEffect(() => {
+    eatSound.current.load();
+    collisionSound.current.load();
+    gameOverSound.current.load();
+  }, []);
+
+  const isOpposite = (dir1, dir2) => (
     (dir1 === 'UP' && dir2 === 'DOWN') ||
     (dir1 === 'DOWN' && dir2 === 'UP') ||
     (dir1 === 'LEFT' && dir2 === 'RIGHT') ||
-    (dir1 === 'RIGHT' && dir2 === 'LEFT');
+    (dir1 === 'RIGHT' && dir2 === 'LEFT')
+  );
 
   const handleKeyDown = (e) => {
     const keyMap = {
@@ -39,8 +58,8 @@ const SnakeGame = () => {
     };
     const newDir = keyMap[e.key];
     if (newDir) {
-      const lastInQueue = directionQueueRef.current.slice(-1)[0] || directionRef.current;
-      if (!isOpposite(lastInQueue, newDir) && lastInQueue !== newDir) {
+      const last = directionQueueRef.current.slice(-1)[0] || directionRef.current;
+      if (!isOpposite(last, newDir) && last !== newDir) {
         directionQueueRef.current.push(newDir);
       }
     }
@@ -64,20 +83,26 @@ const SnakeGame = () => {
 
     const dir = directionRef.current;
     const head = [...snake[0]];
-    switch (dir) {
-      case 'UP': head[0] -= 1; break;
-      case 'DOWN': head[0] += 1; break;
-      case 'LEFT': head[1] -= 1; break;
-      case 'RIGHT': head[1] += 1; break;
-    }
+    if (dir === 'UP') head[0]--;
+    if (dir === 'DOWN') head[0]++;
+    if (dir === 'LEFT') head[1]--;
+    if (dir === 'RIGHT') head[1]++;
 
-    const collided =
-      head[0] < 0 || head[0] >= BOARD_SIZE || head[1] < 0 || head[1] >= BOARD_SIZE ||
-      snake.some(([r, c]) => r === head[0] && c === head[1]);
+    const hitWall = head[0] < 0 || head[0] >= BOARD_SIZE || head[1] < 0 || head[1] >= BOARD_SIZE;
+    const hitSelf = snake.some(([r, c]) => r === head[0] && c === head[1]);
 
-    if (collided) {
+    if (hitWall || hitSelf) {
       setIsGameOver(true);
       setIsRunning(false);
+      if (soundOn) {
+        collisionSound.current.currentTime = 0;
+        collisionSound.current.play();
+        setTimeout(() => {
+          gameOverSound.current.currentTime = 0;
+          gameOverSound.current.play();
+        }, 200);
+      }
+      cancelAnimationFrame(requestRef.current);
       return;
     }
 
@@ -87,39 +112,47 @@ const SnakeGame = () => {
     snakeRef.current = newSnake;
     setSnakeState(newSnake);
 
+    if (hasEaten && soundOn) {
+      eatSound.current.pause();
+      eatSound.current.currentTime = 0;
+      eatSound.current.playbackRate = 1.7;
+      eatSound.current.play();
+    }
+
     if (hasEaten) {
       setScore(prev => prev + 1);
-      let newFood, attempts = 0;
+
+      let newFood;
       do {
         newFood = [
           Math.floor(Math.random() * BOARD_SIZE),
           Math.floor(Math.random() * BOARD_SIZE),
         ];
-        attempts++;
-      } while (newSnake.some(([r, c]) => r === newFood[0] && c === newFood[1]) && attempts < 100);
+      } while (newSnake.some(seg => seg[0] === newFood[0] && seg[1] === newFood[1]));
       foodRef.current = newFood;
       setFoodState(newFood);
     }
-  }, []);
+  }, [soundOn]);
 
-  useEffect(() => {
-    let animationFrameId;
+  const animate = useCallback((time) => {
+    if (!isRunning || isGameOver) return;
 
-    const animate = (time) => {
-      if (!isRunning) return;
-      if (time - lastMoveTimeRef.current > SPEED) {
-        moveSnake();
-        lastMoveTimeRef.current = time;
-      }
-      animationFrameId = requestAnimationFrame(animate);
-    };
-
-    if (isRunning) {
-      animationFrameId = requestAnimationFrame(animate);
+    const elapsed = time - lastMoveTimeRef.current;
+    if (elapsed > SPEED) {
+      moveSnake();
+      lastMoveTimeRef.current = time;
     }
 
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [isRunning, moveSnake]);
+    requestRef.current = requestAnimationFrame(animate);
+  }, [isRunning, isGameOver, moveSnake]);
+
+  useEffect(() => {
+    if (isRunning) {
+      lastMoveTimeRef.current = performance.now();
+      requestRef.current = requestAnimationFrame(animate);
+    }
+    return () => cancelAnimationFrame(requestRef.current);
+  }, [isRunning, animate]);
 
   const toggleGame = () => {
     if (isGameOver) resetGame();
@@ -135,19 +168,21 @@ const SnakeGame = () => {
 
     setSnakeState(freshSnake);
     setFoodState(freshFood);
+    setScore(0);
     setIsRunning(false);
     setHasStarted(false);
     setIsGameOver(false);
-    setScore(0);
 
     snakeRef.current = freshSnake;
     foodRef.current = freshFood;
     directionRef.current = 'RIGHT';
     directionQueueRef.current = [];
-    lastMoveTimeRef.current = 0;
+    lastMoveTimeRef.current = performance.now();
   };
 
-  const renderBoard = () => {
+  const toggleSound = () => setSoundOn(prev => !prev);
+
+  const board = useMemo(() => {
     const grid = [];
     for (let row = 0; row < BOARD_SIZE; row++) {
       for (let col = 0; col < BOARD_SIZE; col++) {
@@ -155,13 +190,13 @@ const SnakeGame = () => {
         const isHead = row === snakeState[0][0] && col === snakeState[0][1];
         const isFood = foodState[0] === row && foodState[1] === col;
         const isEven = (row + col) % 2 === 0;
-  
-        const cellClasses = `cell ${isEven ? 'light-cell' : 'dark-cell'} ${isFood ? 'food' : ''}`;
+
+        const cellClass = `cell ${isEven ? 'light-cell' : 'dark-cell'} ${isFood ? 'food' : ''}`;
         grid.push(
           <div
             key={`${row}-${col}`}
             className={
-              isHead ? `${cellClasses} snake-head` : isSnake ? `${cellClasses} snake` : cellClasses
+              isHead ? `${cellClass} snake-head` : isSnake ? `${cellClass} snake` : cellClass
             }
           >
             {isHead && (
@@ -176,15 +211,11 @@ const SnakeGame = () => {
       }
     }
     return grid;
-  };
-  
+  }, [snakeState, foodState, isGameOver]);
 
   return (
     <div className="snake-container">
       <h2 style={{ marginBottom: '5px' }}>Welcome to Snake Game</h2>
-      <div style={{ color: 'white', fontWeight: 'bold', marginBottom: '8px' }}>
-        Score: {score}
-      </div>
       <div className="controls-under-header" style={{ marginBottom: '2px' }}>
         <img
           src={isRunning ? pauseIcon : resumeIcon}
@@ -200,10 +231,23 @@ const SnakeGame = () => {
             onClick={resetGame}
           />
         )}
+        <button
+          className="control-icon"
+          onClick={toggleSound}
+          style={{
+            backgroundColor: 'rgba(255,255,255,0.15)',
+            border: 'none',
+            fontSize: '18px',
+            lineHeight: '1',
+          }}
+        >
+          {soundOn ? '🔊' : '🔇'}
+        </button>
       </div>
+      <h4 style={{ margin: '10px 0' }}>Score: {score}</h4>
       <div className="board-wrapper">
         <div className="board">
-          {renderBoard()}
+          {board}
           {isGameOver && <div className="game-over-message">Game Over!</div>}
         </div>
       </div>
