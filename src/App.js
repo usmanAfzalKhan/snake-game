@@ -5,7 +5,9 @@ import { doc, getDoc } from 'firebase/firestore';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Login from './pages/Login';
+import SnakeGame from './components/SnakeGame';
 import './App.css';
+
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -36,7 +38,7 @@ function App() {
         {currentUser ? (
           <div className="game-container">
             <h1>Welcome, {userName} 🐍</h1>
-            <p>Game page coming soon!</p>
+            <SnakeGame />
           </div>
         ) : (
           <Login />
