@@ -155,14 +155,21 @@ const SnakeGame = () => {
         const isHead = row === snakeState[0][0] && col === snakeState[0][1];
         const isFood = foodState[0] === row && foodState[1] === col;
         const isEven = (row + col) % 2 === 0;
-
+  
         const cellClasses = `cell ${isEven ? 'light-cell' : 'dark-cell'} ${isFood ? 'food' : ''}`;
         grid.push(
           <div
             key={`${row}-${col}`}
-            className={isHead ? `${cellClasses} snake-head` : isSnake ? `${cellClasses} snake` : cellClasses}
+            className={
+              isHead ? `${cellClasses} snake-head` : isSnake ? `${cellClasses} snake` : cellClasses
+            }
           >
-            {isHead && <div className="snake-face">👀<span className="snake-mouth">👅</span></div>}
+            {isHead && (
+              <div className="snake-face">
+                {isGameOver ? 'XX' : '👀'}
+                <span className="snake-mouth">👅</span>
+              </div>
+            )}
             {isFood && '🍎'}
           </div>
         );
@@ -170,6 +177,7 @@ const SnakeGame = () => {
     }
     return grid;
   };
+  
 
   return (
     <div className="snake-container">
