@@ -6,7 +6,7 @@ import resumeIcon from '../images/resume.png';
 import restartIcon from '../images/restart.png';
 
 const BOARD_SIZE = 20;
-const SPEED = 120; // Speed in ms (minimum time between snake moves)
+const SPEED = 90; // Faster for smoother feel
 const INITIAL_SNAKE = [[10, 10]];
 const INITIAL_FOOD = [5, 5];
 
@@ -16,6 +16,7 @@ const SnakeGame = () => {
   const [isGameOver, setIsGameOver] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
+  const [score, setScore] = useState(0);
 
   const snakeRef = useRef(INITIAL_SNAKE);
   const foodRef = useRef(INITIAL_FOOD);
@@ -23,17 +24,12 @@ const SnakeGame = () => {
   const directionQueueRef = useRef([]);
   const lastMoveTimeRef = useRef(0);
 
-  // Prevent direct opposite direction reversal
-  const isOpposite = (dir1, dir2) => {
-    return (
-      (dir1 === 'UP' && dir2 === 'DOWN') ||
-      (dir1 === 'DOWN' && dir2 === 'UP') ||
-      (dir1 === 'LEFT' && dir2 === 'RIGHT') ||
-      (dir1 === 'RIGHT' && dir2 === 'LEFT')
-    );
-  };
+  const isOpposite = (dir1, dir2) =>
+    (dir1 === 'UP' && dir2 === 'DOWN') ||
+    (dir1 === 'DOWN' && dir2 === 'UP') ||
+    (dir1 === 'LEFT' && dir2 === 'RIGHT') ||
+    (dir1 === 'RIGHT' && dir2 === 'LEFT');
 
-  // Handle arrow key input
   const handleKeyDown = (e) => {
     const keyMap = {
       ArrowUp: 'UP',
@@ -55,12 +51,10 @@ const SnakeGame = () => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Moves the snake forward one step
   const moveSnake = useCallback(() => {
     const snake = [...snakeRef.current];
     const food = foodRef.current;
 
-    // Apply next direction from queue
     if (directionQueueRef.current.length > 0) {
       const nextDir = directionQueueRef.current.shift();
       if (!isOpposite(directionRef.current, nextDir)) {
@@ -68,7 +62,6 @@ const SnakeGame = () => {
       }
     }
 
-    // Calculate new head position
     const dir = directionRef.current;
     const head = [...snake[0]];
     switch (dir) {
@@ -78,57 +71,46 @@ const SnakeGame = () => {
       case 'RIGHT': head[1] += 1; break;
     }
 
-    // Collision with wall or self
-    if (
-      head[0] < 0 ||
-      head[0] >= BOARD_SIZE ||
-      head[1] < 0 ||
-      head[1] >= BOARD_SIZE ||
-      snake.some(([r, c]) => r === head[0] && c === head[1])
-    ) {
+    const collided =
+      head[0] < 0 || head[0] >= BOARD_SIZE || head[1] < 0 || head[1] >= BOARD_SIZE ||
+      snake.some(([r, c]) => r === head[0] && c === head[1]);
+
+    if (collided) {
       setIsGameOver(true);
       setIsRunning(false);
       return;
     }
 
-    // Check if food is eaten
     const hasEaten = head[0] === food[0] && head[1] === food[1];
     const newSnake = hasEaten ? [head, ...snake] : [head, ...snake.slice(0, -1)];
 
     snakeRef.current = newSnake;
     setSnakeState(newSnake);
 
-    // Generate new food if eaten
     if (hasEaten) {
-      let newFood;
-      let attempts = 0;
+      setScore(prev => prev + 1);
+      let newFood, attempts = 0;
       do {
         newFood = [
           Math.floor(Math.random() * BOARD_SIZE),
           Math.floor(Math.random() * BOARD_SIZE),
         ];
         attempts++;
-      } while (
-        newSnake.some(seg => seg[0] === newFood[0] && seg[1] === newFood[1]) &&
-        attempts < 100
-      );
+      } while (newSnake.some(([r, c]) => r === newFood[0] && c === newFood[1]) && attempts < 100);
       foodRef.current = newFood;
       setFoodState(newFood);
     }
   }, []);
 
-  // Game loop with requestAnimationFrame
   useEffect(() => {
     let animationFrameId;
 
     const animate = (time) => {
       if (!isRunning) return;
-
       if (time - lastMoveTimeRef.current > SPEED) {
         moveSnake();
         lastMoveTimeRef.current = time;
       }
-
       animationFrameId = requestAnimationFrame(animate);
     };
 
@@ -139,7 +121,6 @@ const SnakeGame = () => {
     return () => cancelAnimationFrame(animationFrameId);
   }, [isRunning, moveSnake]);
 
-  // Pause / resume toggle
   const toggleGame = () => {
     if (isGameOver) resetGame();
     setIsRunning(prev => {
@@ -148,7 +129,6 @@ const SnakeGame = () => {
     });
   };
 
-  // Reset all game state
   const resetGame = () => {
     const freshSnake = [[10, 10]];
     const freshFood = [5, 5];
@@ -158,6 +138,7 @@ const SnakeGame = () => {
     setIsRunning(false);
     setHasStarted(false);
     setIsGameOver(false);
+    setScore(0);
 
     snakeRef.current = freshSnake;
     foodRef.current = freshFood;
@@ -166,10 +147,8 @@ const SnakeGame = () => {
     lastMoveTimeRef.current = 0;
   };
 
-  // Draw the board grid with snake and food
   const renderBoard = () => {
     const grid = [];
-
     for (let row = 0; row < BOARD_SIZE; row++) {
       for (let col = 0; col < BOARD_SIZE; col++) {
         const isSnake = snakeState.some(([r, c]) => r === row && c === col);
@@ -181,9 +160,7 @@ const SnakeGame = () => {
         grid.push(
           <div
             key={`${row}-${col}`}
-            className={
-              isHead ? `${cellClasses} snake-head` : isSnake ? `${cellClasses} snake` : cellClasses
-            }
+            className={isHead ? `${cellClasses} snake-head` : isSnake ? `${cellClasses} snake` : cellClasses}
           >
             {isHead && <div className="snake-face">👀<span className="snake-mouth">👅</span></div>}
             {isFood && '🍎'}
@@ -194,10 +171,12 @@ const SnakeGame = () => {
     return grid;
   };
 
-  // JSX layout
   return (
     <div className="snake-container">
       <h2 style={{ marginBottom: '5px' }}>Welcome to Snake Game</h2>
+      <div style={{ color: 'white', fontWeight: 'bold', marginBottom: '8px' }}>
+        Score: {score}
+      </div>
       <div className="controls-under-header" style={{ marginBottom: '2px' }}>
         <img
           src={isRunning ? pauseIcon : resumeIcon}
