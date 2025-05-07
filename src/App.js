@@ -1,25 +1,25 @@
 // Import routing tools and core components
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import SnakeGame from './components/SnakeGame';
-import StatsPage from './pages/StatsPage';
-import Login from './pages/Login';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import './App.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import SnakeGame from "./components/SnakeGame";
+import StatsPage from "./pages/StatsPage";
+import Login from "./pages/Login";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import "./App.css";
 
 // Firebase setup
-import { auth, db } from './firebase';
-import { doc, getDoc } from 'firebase/firestore';
-import { sendEmailVerification, onAuthStateChanged } from 'firebase/auth';
+import { auth, db } from "./firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { sendEmailVerification, onAuthStateChanged } from "firebase/auth";
 
 // React core hooks
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from "react";
 
 function App() {
   // App-wide states
   const [currentUser, setCurrentUser] = useState(null); // Authenticated and verified user
   const [firebaseUser, setFirebaseUser] = useState(null); // Raw Firebase user object
-  const [userName, setUserName] = useState(''); // Display name fetched from Firestore
+  const [userName, setUserName] = useState(""); // Display name fetched from Firestore
   const [pendingVerification, setPendingVerification] = useState(false); // Is user waiting to verify email?
   const [countdownTime, setCountdownTime] = useState(0); // Timer for resending email (in seconds)
   const [loginStarted, setLoginStarted] = useState(false); // Whether user has clicked 'Get Started'
@@ -33,7 +33,7 @@ function App() {
       setCountdownTime((prev) => {
         if (prev <= 1) {
           clearInterval(countdownRef.current);
-          localStorage.removeItem('resendCountdownStart');
+          localStorage.removeItem("resendCountdownStart");
           return 0;
         }
         return prev - 1;
@@ -53,7 +53,7 @@ function App() {
           setPendingVerification(false);
 
           // Fetch display name from Firestore
-          const docRef = doc(db, 'users', user.uid);
+          const docRef = doc(db, "users", user.uid);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             setUserName(docSnap.data().name);
@@ -62,17 +62,19 @@ function App() {
           // User is not verified
           setPendingVerification(true);
           setCurrentUser(null);
-          setUserName('');
+          setUserName("");
 
           // If a countdown was saved previously, resume it
-          const savedTimestamp = localStorage.getItem('resendCountdownStart');
+          const savedTimestamp = localStorage.getItem("resendCountdownStart");
           if (savedTimestamp) {
-            const elapsed = Math.floor((Date.now() - parseInt(savedTimestamp, 10)) / 1000);
+            const elapsed = Math.floor(
+              (Date.now() - parseInt(savedTimestamp, 10)) / 1000
+            );
             const remaining = 3600 - elapsed;
             if (remaining > 0) {
               startCountdown(remaining);
             } else {
-              localStorage.removeItem('resendCountdownStart');
+              localStorage.removeItem("resendCountdownStart");
             }
           }
 
@@ -92,19 +94,19 @@ function App() {
         setCurrentUser(null);
         setFirebaseUser(null);
         setPendingVerification(false);
-        setUserName('');
+        setUserName("");
       }
     });
 
     // Listen for "start-countdown" event from Login.js
     const trigger = () => startCountdown(3600);
-    window.addEventListener('start-countdown', trigger);
+    window.addEventListener("start-countdown", trigger);
 
     // Cleanup
     return () => {
       clearInterval(countdownRef.current);
       unsubscribe();
-      window.removeEventListener('start-countdown', trigger);
+      window.removeEventListener("start-countdown", trigger);
     };
   }, []);
 
@@ -114,18 +116,20 @@ function App() {
       try {
         await sendEmailVerification(firebaseUser);
         const startTime = Date.now();
-        localStorage.setItem('resendCountdownStart', startTime.toString());
+        localStorage.setItem("resendCountdownStart", startTime.toString());
         startCountdown(3600);
       } catch (error) {
-        console.error('Error resending verification:', error);
+        console.error("Error resending verification:", error);
       }
     }
   };
 
   // Format seconds to MM:SS for countdown display
   const formatTime = (secs) => {
-    const m = Math.floor(secs / 60).toString().padStart(2, '0');
-    const s = (secs % 60).toString().padStart(2, '0');
+    const m = Math.floor(secs / 60)
+      .toString()
+      .padStart(2, "0");
+    const s = (secs % 60).toString().padStart(2, "0");
     return `${m}:${s}`;
   };
 
@@ -145,34 +149,58 @@ function App() {
             <div className="game-container">
               <h2>📧 Please Verify Your Email</h2>
               <p>
-                We’ve sent a verification email to your inbox. Please click the link to verify and then log in again.
+                We’ve sent a verification email to your inbox. Please click the
+                link to verify and then log in again.
               </p>
-              <p><em>(Check your spam folder if you don't see it)</em></p>
+              <p>
+                <em>(Check your spam folder if you don't see it)</em>
+              </p>
 
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
                 <button
                   className="resend-btn"
                   onClick={handleResend}
                   disabled={countdownTime > 0}
-                  style={{ marginBottom: '6px', opacity: countdownTime > 0 ? 0.5 : 1 }}
+                  style={{
+                    marginBottom: "6px",
+                    opacity: countdownTime > 0 ? 0.5 : 1,
+                  }}
                 >
                   Resend Verification Email
                 </button>
 
                 {countdownTime > 0 && (
-                  <p style={{ fontSize: '14px', color: '#ccc' }}>
+                  <p style={{ fontSize: "14px", color: "#ccc" }}>
                     ⏳ Resend in {formatTime(countdownTime)}
                   </p>
                 )}
 
                 {countdownTime === 0 && (
-                  <p style={{ fontSize: '14px', color: '#8fff8f', marginTop: '8px' }}>
+                  <p
+                    style={{
+                      fontSize: "14px",
+                      color: "#8fff8f",
+                      marginTop: "8px",
+                    }}
+                  >
                     ✅ You can now resend the email.
                   </p>
                 )}
 
                 {countdownTime > 0 && (
-                  <p style={{ fontSize: '14px', color: '#ccc', marginTop: '8px' }}>
+                  <p
+                    style={{
+                      fontSize: "14px",
+                      color: "#ccc",
+                      marginTop: "8px",
+                    }}
+                  >
                     📬 Verification link expires in {formatTime(countdownTime)}
                   </p>
                 )}
@@ -189,14 +217,18 @@ function App() {
                     <div className="game-container">
                       <h1>Welcome, {userName}</h1>
                       <p>
-                        Eat apples, grow your snake, and don’t crash into walls or yourself!
-                        Each game earns you points — try to beat your high score and climb the global leaderboard.
+                        Eat apples, grow your snake, and don’t crash into walls
+                        or yourself! Each game earns you points — try to beat
+                        your high score and climb the global leaderboard.
                       </p>
                       <SnakeGame />
                     </div>
                   ) : (
                     // Not logged in → show Login/Register component
-                    <Login loginStarted={loginStarted} setLoginStarted={setLoginStarted} />
+                    <Login
+                      loginStarted={loginStarted}
+                      setLoginStarted={setLoginStarted}
+                    />
                   )
                 }
               />

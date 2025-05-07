@@ -8,7 +8,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyCCR_GtbRu727e_wzOyAyIgdYndhraTqlk",
   authDomain: "byte-n-slither.firebaseapp.com",
   projectId: "byte-n-slither",
-  storageBucket: "byte-n-slither.appspot.com",  // 🔧 fixed typo (was .firebasestorage.app)
+  storageBucket: "byte-n-slither.appspot.com", // fixed typo (was .firebasestorage.app)
   messagingSenderId: "310028878985",
   appId: "1:310028878985:web:90ebc43e46b76e5eeef258",
 };
