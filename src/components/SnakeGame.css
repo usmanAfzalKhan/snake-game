@@ -188,3 +188,17 @@
     animation: none;
   }
 }
+
+/* Prevent scrollbars and layout shift */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
+/* Make the game container take the full screen */
+.snake-container {
+  height: 100vh;
+  justify-content: center;
+}

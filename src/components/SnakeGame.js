@@ -1,4 +1,4 @@
-// SnakeGame.js - Enhanced responsiveness and improved speed balance with detailed explanations
+// SnakeGame.js - Responsive Snake Game with Firebase Score Logging, Mobile Support, and Optimized Gameplay
 
 import React, {
   useState,
@@ -12,63 +12,73 @@ import { getAuth } from "firebase/auth";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
 
+// Control icons
 import pauseIcon from "../images/pause.png";
 import resumeIcon from "../images/resume.png";
 import restartIcon from "../images/restart.png";
 
-const SPEED = 100; // Game speed in ms - lower is faster
-const isMobileDevice = /Mobi|Android/i.test(navigator.userAgent);
+// Game settings
+const SPEED = 100; // milliseconds between frames
+const isMobileDevice = /Mobi|Android/i.test(navigator.userAgent); // Check for mobile
 
 const SnakeGame = () => {
-  // Game state variables
-  const [boardSize, setBoardSize] = useState(window.innerWidth < 500 ? 12 : 20); // Smaller board for mobile
-  const [snakeState, setSnakeState] = useState([]); // Array of [row, col] positions of snake
-  const [foodState, setFoodState] = useState([5, 5]); // Initial food position
+  // Game state
+  const [boardSize, setBoardSize] = useState(window.innerWidth < 500 ? 12 : 20);
+  const [snakeState, setSnakeState] = useState([]);
+  const [foodState, setFoodState] = useState([5, 5]);
   const [isGameOver, setIsGameOver] = useState(false);
-  const [isRunning, setIsRunning] = useState(false); // Is the game currently playing
-  const [hasStarted, setHasStarted] = useState(false); // Has the game been started yet
+  const [isRunning, setIsRunning] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
   const [soundOn, setSoundOn] = useState(true);
-  const [score, setScore] = useState(0); // Player's score
+  const [score, setScore] = useState(0);
 
-  // Refs to keep state without re-rendering
+  // References to mutable state (avoid re-renders)
   const snakeRef = useRef([]);
   const foodRef = useRef([5, 5]);
   const directionRef = useRef("RIGHT");
-  const directionQueueRef = useRef([]); // Queue for direction changes
+  const directionQueueRef = useRef([]);
   const lastMoveTimeRef = useRef(performance.now());
   const requestRef = useRef(null);
 
-  // Load sound effects
+  // Audio
   const eatSound = useRef(new Audio(require("../images/eat.mp3")));
   const gameOverSound = useRef(new Audio(require("../images/gameover.mp3")));
   const collisionSound = useRef(new Audio(require("../images/collision.mp3")));
 
+  // Preload audio on mount
   useEffect(() => {
-    // Preload all sound files
     eatSound.current.load();
     collisionSound.current.load();
     gameOverSound.current.load();
   }, []);
 
+  // Handle dynamic board size
   useEffect(() => {
-    // Adjust board size based on screen size
     const handleResize = () => {
-      const newSize = window.innerWidth < 500 ? 12 : 20;
-      setBoardSize(newSize);
+      setBoardSize(window.innerWidth < 500 ? 12 : 20);
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Center snake at start
   useEffect(() => {
-    // Initialize snake in the center
     const center = Math.floor(boardSize / 2);
     const centeredSnake = [[center, center]];
     setSnakeState(centeredSnake);
     snakeRef.current = centeredSnake;
   }, [boardSize]);
 
-  // Save player's score to Firebase
+  // 🚫 Prevent mobile scrolling during touch (UX fix)
+  useEffect(() => {
+    const preventScroll = (e) => e.preventDefault();
+    document.body.addEventListener("touchmove", preventScroll, { passive: false });
+    return () => {
+      document.body.removeEventListener("touchmove", preventScroll);
+    };
+  }, []);
+
+  // 🔄 Save score to Firebase
   const saveScoreToDB = async (score) => {
     const auth = getAuth();
     const user = auth.currentUser;
@@ -84,7 +94,7 @@ const SnakeGame = () => {
     }
   };
 
-  // Check if new direction is opposite to current one
+  // Direction logic: prevent reversing into self
   const isOpposite = useCallback(
     (dir1, dir2) =>
       (dir1 === "UP" && dir2 === "DOWN") ||
@@ -94,7 +104,7 @@ const SnakeGame = () => {
     []
   );
 
-  // Keyboard direction input
+  // 🎮 Handle keyboard input
   const handleKeyDown = useCallback(
     (e) => {
       const keyMap = {
@@ -105,8 +115,7 @@ const SnakeGame = () => {
       };
       const newDir = keyMap[e.key];
       if (newDir) {
-        const last =
-          directionQueueRef.current.slice(-1)[0] || directionRef.current;
+        const last = directionQueueRef.current.slice(-1)[0] || directionRef.current;
         if (!isOpposite(last, newDir) && last !== newDir) {
           directionQueueRef.current.push(newDir);
         }
@@ -115,13 +124,12 @@ const SnakeGame = () => {
     [isOpposite]
   );
 
-  // Bind keyboard input
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
-  // Touch input for mobile swiping
+  // 📱 Handle mobile swipe input
   useEffect(() => {
     let startX = 0,
       startY = 0;
@@ -135,14 +143,9 @@ const SnakeGame = () => {
       if (Math.abs(dx) > 30 || Math.abs(dy) > 30) {
         const newDir =
           Math.abs(dx) > Math.abs(dy)
-            ? dx > 0
-              ? "RIGHT"
-              : "LEFT"
-            : dy > 0
-            ? "DOWN"
-            : "UP";
-        const last =
-          directionQueueRef.current.slice(-1)[0] || directionRef.current;
+            ? dx > 0 ? "RIGHT" : "LEFT"
+            : dy > 0 ? "DOWN" : "UP";
+        const last = directionQueueRef.current.slice(-1)[0] || directionRef.current;
         if (!isOpposite(last, newDir) && last !== newDir) {
           directionQueueRef.current.push(newDir);
         }
@@ -156,12 +159,12 @@ const SnakeGame = () => {
     };
   }, [isOpposite]);
 
-  // Main function to move the snake
+  // 🐍 Move the snake
   const moveSnake = useCallback(() => {
     const snake = [...snakeRef.current];
     const food = foodRef.current;
 
-    // Update direction if queued
+    // Apply new direction from queue
     if (directionQueueRef.current.length > 0) {
       const nextDir = directionQueueRef.current.shift();
       if (!isOpposite(directionRef.current, nextDir)) {
@@ -176,16 +179,11 @@ const SnakeGame = () => {
     if (dir === "LEFT") head[1]--;
     if (dir === "RIGHT") head[1]++;
 
-    // Check for collisions
-    const hitWall =
-      head[0] < 0 ||
-      head[0] >= boardSize ||
-      head[1] < 0 ||
-      head[1] >= boardSize;
+    // Collision detection
+    const hitWall = head[0] < 0 || head[0] >= boardSize || head[1] < 0 || head[1] >= boardSize;
     const hitSelf = snake.some(([r, c]) => r === head[0] && c === head[1]);
 
     if (hitWall || hitSelf) {
-      // Game over logic
       setIsGameOver(true);
       setIsRunning(false);
       saveScoreToDB(score);
@@ -201,16 +199,12 @@ const SnakeGame = () => {
       return;
     }
 
-    // Move the snake forward
     const hasEaten = head[0] === food[0] && head[1] === food[1];
-    const newSnake = hasEaten
-      ? [head, ...snake]
-      : [head, ...snake.slice(0, -1)];
+    const newSnake = hasEaten ? [head, ...snake] : [head, ...snake.slice(0, -1)];
 
     snakeRef.current = newSnake;
     setSnakeState(newSnake);
 
-    // Play sound and respawn food
     if (hasEaten && soundOn && !isMobileDevice) {
       try {
         eatSound.current.pause();
@@ -222,15 +216,15 @@ const SnakeGame = () => {
       }
     }
 
+    // 🍎 Re-spawn food in random location not on snake
     if (hasEaten) {
       setScore((prev) => prev + 1);
-    
+
       let newFoodCandidate = [0, 0];
       let isOnSnake = true;
-    
-      // Predefine the test function outside the loop
-      const isOccupied = ([r, c]) => r === newFoodCandidate[0] && c === newFoodCandidate[1];
-    
+      const isOccupied = ([r, c]) =>
+        r === newFoodCandidate[0] && c === newFoodCandidate[1];
+
       while (isOnSnake) {
         newFoodCandidate = [
           Math.floor(Math.random() * boardSize),
@@ -238,15 +232,13 @@ const SnakeGame = () => {
         ];
         isOnSnake = newSnake.some(isOccupied);
       }
-    
+
       foodRef.current = newFoodCandidate;
       setFoodState(newFoodCandidate);
     }
-    
-    
   }, [soundOn, score, boardSize, isOpposite]);
 
-  // Animation loop using requestAnimationFrame
+  // 🎞️ Game animation loop
   const animate = useCallback(
     (time) => {
       if (!isRunning || isGameOver) return;
@@ -260,7 +252,6 @@ const SnakeGame = () => {
     [isRunning, isGameOver, moveSnake]
   );
 
-  // Start animation loop
   useEffect(() => {
     if (isRunning) {
       lastMoveTimeRef.current = performance.now();
@@ -269,7 +260,7 @@ const SnakeGame = () => {
     return () => cancelAnimationFrame(requestRef.current);
   }, [isRunning, animate]);
 
-  // Start or pause game
+  // 🎮 Controls
   const toggleGame = () => {
     if (isGameOver) resetGame();
     setIsRunning((prev) => {
@@ -278,7 +269,6 @@ const SnakeGame = () => {
     });
   };
 
-  // Reset game state and variables
   const resetGame = () => {
     const center = Math.floor(boardSize / 2);
     const freshSnake = [[center, center]];
@@ -298,7 +288,7 @@ const SnakeGame = () => {
 
   const toggleSound = () => setSoundOn((prev) => !prev);
 
-  // Create the board with cells and visuals
+  // 🧱 Render the game board
   const board = useMemo(() => {
     if (!snakeState.length) return null;
     const grid = [];
@@ -312,6 +302,7 @@ const SnakeGame = () => {
         const cellClass = `cell ${isEven ? "light-cell" : "dark-cell"} ${
           isFood ? "food" : ""
         }`;
+
         grid.push(
           <div
             key={`${row}-${col}`}
