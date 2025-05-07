@@ -31,11 +31,11 @@ A modern, responsive version of the classic **Snake Game** built with **React**.
 
 ## 📸 Screenshots
 
-![Start Screen](images/start-screen.jped)  
-![Login Screen](images/login-screen.jped)
-![Signup Screen](images/signup-screen.jped)
-![Gameplay](images/gameplay-screen.jped)
-![Leaderboard Screen](images/leaderboard-screen.jped)
+![Start Screen](images/start-screen.jpeg)  
+![Login Screen](images/login-screen.jpeg)
+![Signup Screen](images/signup-screen.jpeg)
+![Gameplay](images/gameplay-screen.jpeg)
+![Leaderboard Screen](images/leaderboard-screen.jpeg)
 
 ## 🧠 Key Concepts Implemented
 
