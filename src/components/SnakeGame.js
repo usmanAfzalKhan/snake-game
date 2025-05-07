@@ -224,17 +224,23 @@ const SnakeGame = () => {
 
     if (hasEaten) {
       setScore((prev) => prev + 1);
-      let newFood;
-      do {
-        newFood = [
+    
+      let newFoodCandidate = [0, 0];
+      let isOnSnake = true;
+    
+      // Generate food until it's not on the snake
+      while (isOnSnake) {
+        newFoodCandidate = [
           Math.floor(Math.random() * boardSize),
           Math.floor(Math.random() * boardSize),
         ];
-      } while (newSnake.some(seg => seg[0] === newFood[0] && seg[1] === newFood[1]));
-      
-      foodRef.current = newFood;
-      setFoodState(newFood);
+        isOnSnake = newSnake.some(([r, c]) => r === newFoodCandidate[0] && c === newFoodCandidate[1]);
+      }
+    
+      foodRef.current = newFoodCandidate;
+      setFoodState(newFoodCandidate);
     }
+    
   }, [soundOn, score, boardSize, isOpposite]);
 
   // Animation loop using requestAnimationFrame
