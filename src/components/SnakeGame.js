@@ -227,12 +227,11 @@ const SnakeGame = () => {
       let newFood;
       do {
         newFood = [
-          Math.floor(Math.random() * boardSize),
-          Math.floor(Math.random() * boardSize),
+          Math.floor(Math.random() * BOARD_SIZE),
+          Math.floor(Math.random() * BOARD_SIZE),
         ];
-      } while (
-        newSnake.some((seg) => seg[0] === newFood[0] && seg[1] === newFood[1])
-      );
+      } while (newSnake.some(seg => seg[0] === newFood[0] && seg[1] === newFood[1]));
+      
       foodRef.current = newFood;
       setFoodState(newFood);
     }
