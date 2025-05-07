@@ -1,3 +1,4 @@
+// ... (imports unchanged)
 import React, {
   useState,
   useEffect,
@@ -6,6 +7,9 @@ import React, {
   useMemo
 } from 'react';
 import './SnakeGame.css';
+import { getAuth } from 'firebase/auth';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase';
 
 import pauseIcon from '../images/pause.png';
 import resumeIcon from '../images/resume.png';
@@ -41,6 +45,22 @@ const SnakeGame = () => {
     collisionSound.current.load();
     gameOverSound.current.load();
   }, []);
+
+  const saveScoreToDB = async (score) => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) return;
+
+    try {
+      await addDoc(collection(db, 'scores'), {
+        userId: user.uid,
+        score,
+        createdAt: serverTimestamp(),
+      });
+    } catch (err) {
+      console.error('Error saving score:', err);
+    }
+  };
 
   const isOpposite = (dir1, dir2) => (
     (dir1 === 'UP' && dir2 === 'DOWN') ||
@@ -94,14 +114,18 @@ const SnakeGame = () => {
     if (hitWall || hitSelf) {
       setIsGameOver(true);
       setIsRunning(false);
+      saveScoreToDB(score);
+
       if (soundOn) {
         collisionSound.current.currentTime = 0;
         collisionSound.current.play();
+
         setTimeout(() => {
           gameOverSound.current.currentTime = 0;
           gameOverSound.current.play();
         }, 200);
       }
+
       cancelAnimationFrame(requestRef.current);
       return;
     }
@@ -112,11 +136,18 @@ const SnakeGame = () => {
     snakeRef.current = newSnake;
     setSnakeState(newSnake);
 
-    if (hasEaten && soundOn) {
-      eatSound.current.pause();
-      eatSound.current.currentTime = 0;
-      eatSound.current.playbackRate = 1.7;
-      eatSound.current.play();
+    if (hasEaten && soundOn && eatSound.current) {
+      const sound = eatSound.current;
+      try {
+        sound.pause();
+        sound.currentTime = 0;
+        sound.playbackRate = 1.7;
+        sound.play().catch((err) =>
+          console.warn('Eat sound play error:', err.message)
+        );
+      } catch (err) {
+        console.warn('Eat sound error:', err.message);
+      }
     }
 
     if (hasEaten) {
@@ -132,7 +163,7 @@ const SnakeGame = () => {
       foodRef.current = newFood;
       setFoodState(newFood);
     }
-  }, [soundOn]);
+  }, [soundOn, score]);
 
   const animate = useCallback((time) => {
     if (!isRunning || isGameOver) return;

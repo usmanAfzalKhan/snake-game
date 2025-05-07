@@ -18,6 +18,8 @@ const UserMenu = ({ userName }) => {
       </div>
       {open && (
         <div className="user-dropdown">
+            <button onClick={() => navigate('/')}>🎮 Back to Game</button>
+
           <button onClick={() => navigate('/stats')}>📊 View Stats</button>
           <button onClick={handleLogout}>🚪 Logout</button>
         </div>
