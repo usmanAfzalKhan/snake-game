@@ -4,7 +4,8 @@ A modern, responsive version of the classic **Snake Game** built with **React**.
 
 ## 🎮 Live Demo
 
-👉 [Play the game]([https://your-snake-game-link.netlify.app/](https://byte-n-slither.netlify.app/))
+👉 [Play the game](https://byte-n-slither.netlify.app/)
+
 
 ## 💡 Features
 
