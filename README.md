@@ -1,70 +1,51 @@
-# Getting Started with Create React App
+# 🐍 React Snake Game
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern, responsive version of the classic **Snake Game** built with **React**. Featuring Firebase integration for real-time score saving, custom sound effects with the Web Audio API, and smooth emoji-based animations. Designed for both desktop and mobile users with adaptive performance tweaks.
 
-## Available Scripts
+## 🎮 Live Demo
 
-In the project directory, you can run:
+👉 [Play the game]([https://your-snake-game-link.netlify.app/](https://byte-n-slither.netlify.app/))
 
-### `npm start`
+## 💡 Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- ✅ **Built in React** using functional components and hooks
+- ✅ **Responsive board size**: Auto-adjusts based on device width (mobile vs. desktop)
+- ✅ **Emoji snake head** 🐍 for playful design
+- ✅ **Keyboard controls** (WASD + Arrow Keys) with real-time responsiveness
+- ✅ **Pause, resume, and restart buttons** with intuitive icons
+- ✅ **Collision detection** and **game over animation**
+- ✅ **Live score display**, with high score saving via Firebase
+- ✅ **Custom sound effects** using Web Audio API
+- ✅ **Mobile optimization** for touch performance and layout
+- ✅ Lightweight, fast load, and Netlify deployed
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🛠️ Built With
 
-### `npm test`
+- **React (useState, useEffect, useRef, useCallback)**
+- **Firebase Firestore & Auth** – To store user scores securely
+- **Web Audio API** – For dynamic in-game sound control
+- **HTML5 + CSS3**
+- **JavaScript (ES6+)**
+- **GitHub** – Version control
+- **Netlify** – Hosting and CI/CD
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 📸 Screenshots
 
-### `npm run build`
+![Start Screen](images/start-screen.jped)  
+![Login Screen](images/login-screen.jped)
+![Signup Screen](images/signup-screen.jped)
+![Gameplay](images/gameplay-screen.jped)
+![Leaderboard Screen](images/leaderboard-screen.jped)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🧠 Key Concepts Implemented
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Custom **game loop** using `setInterval` and `useRef` for consistent timing
+- Efficient **keyboard event handling** and state updates with `useCallback`
+- **Grid-based positioning** of snake and food using 2D coordinate logic
+- **Game over detection** via self-collision and wall boundaries
+- Controlled audio playback via preloaded **AudioBuffer** for latency-free effects
+- Firebase Firestore integration for **authenticated user scores** with timestamps
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Feel free to fork or contribute! 💻🐍  
