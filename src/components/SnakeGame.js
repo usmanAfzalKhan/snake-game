@@ -16,10 +16,12 @@ import pauseIcon from "../images/pause.png";
 import resumeIcon from "../images/resume.png";
 import restartIcon from "../images/restart.png";
 
+// Game speed and device detection
 const SPEED = 100;
 const isMobileDevice = /Mobi|Android/i.test(navigator.userAgent);
 
 const SnakeGame = () => {
+  // State variables to track game status and UI elements
   const [boardSize, setBoardSize] = useState(window.innerWidth < 500 ? 12 : 20);
   const [snakeState, setSnakeState] = useState([]);
   const [foodState, setFoodState] = useState([5, 5]);
@@ -29,6 +31,7 @@ const SnakeGame = () => {
   const [soundOn, setSoundOn] = useState(true);
   const [score, setScore] = useState(0);
 
+  // Refs to persist values without causing re-renders
   const snakeRef = useRef([]);
   const foodRef = useRef([5, 5]);
   const directionRef = useRef("RIGHT");
@@ -36,16 +39,19 @@ const SnakeGame = () => {
   const lastMoveTimeRef = useRef(performance.now());
   const requestRef = useRef(null);
 
+  // Sound effect refs
   const eatSound = useRef(new Audio(require("../images/eat.mp3")));
   const gameOverSound = useRef(new Audio(require("../images/gameover.mp3")));
   const collisionSound = useRef(new Audio(require("../images/collision.mp3")));
 
+  // Preload sounds on mount
   useEffect(() => {
     eatSound.current.load();
     collisionSound.current.load();
     gameOverSound.current.load();
   }, []);
 
+  // Handle board size dynamically based on screen width
   useEffect(() => {
     const handleResize = () => {
       const newSize = window.innerWidth < 500 ? 12 : 20;
@@ -55,6 +61,7 @@ const SnakeGame = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Center snake on board whenever boardSize updates
   useEffect(() => {
     const center = Math.floor(boardSize / 2);
     const centeredSnake = [[center, center]];
@@ -62,13 +69,14 @@ const SnakeGame = () => {
     snakeRef.current = centeredSnake;
   }, [boardSize]);
 
+  // Disable scrolling during swipe to prevent mobile layout break
   useEffect(() => {
-    // Disable mobile scrolling to prevent layout shift and gameplay interruption
     const preventScroll = (e) => e.preventDefault();
     document.body.addEventListener("touchmove", preventScroll, { passive: false });
     return () => document.body.removeEventListener("touchmove", preventScroll);
   }, []);
 
+  // Save the user's score to Firebase
   const saveScoreToDB = async (score) => {
     const auth = getAuth();
     const user = auth.currentUser;
@@ -84,6 +92,7 @@ const SnakeGame = () => {
     }
   };
 
+  // Check if two directions are opposite (prevent 180 turn)
   const isOpposite = useCallback(
     (dir1, dir2) =>
       (dir1 === "UP" && dir2 === "DOWN") ||
@@ -93,6 +102,7 @@ const SnakeGame = () => {
     []
   );
 
+  // Handle keyboard input to change direction
   const handleKeyDown = useCallback(
     (e) => {
       const keyMap = {
@@ -112,11 +122,13 @@ const SnakeGame = () => {
     [isOpposite]
   );
 
+  // Bind keyboard event
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
+  // Handle swipe input for mobile
   useEffect(() => {
     let startX = 0, startY = 0;
     const handleTouchStart = (e) => {
@@ -142,6 +154,7 @@ const SnakeGame = () => {
     };
   }, [isOpposite]);
 
+  // Core game loop: move the snake, check collisions, handle growth
   const moveSnake = useCallback(() => {
     const snake = [...snakeRef.current];
     const food = foodRef.current;
@@ -212,6 +225,7 @@ const SnakeGame = () => {
     }
   }, [soundOn, score, boardSize, isOpposite]);
 
+  // Animate the game loop with requestAnimationFrame
   const animate = useCallback(
     (time) => {
       if (!isRunning || isGameOver) return;
@@ -225,6 +239,7 @@ const SnakeGame = () => {
     [isRunning, isGameOver, moveSnake]
   );
 
+  // Start animation when game is running
   useEffect(() => {
     if (isRunning) {
       lastMoveTimeRef.current = performance.now();
@@ -233,6 +248,7 @@ const SnakeGame = () => {
     return () => cancelAnimationFrame(requestRef.current);
   }, [isRunning, animate]);
 
+  // Toggle game play/pause or reset on game over
   const toggleGame = () => {
     if (isGameOver) resetGame();
     setIsRunning((prev) => {
@@ -241,6 +257,7 @@ const SnakeGame = () => {
     });
   };
 
+  // Reset all state to initial values
   const resetGame = () => {
     const center = Math.floor(boardSize / 2);
     const freshSnake = [[center, center]];
@@ -258,8 +275,10 @@ const SnakeGame = () => {
     lastMoveTimeRef.current = performance.now();
   };
 
+  // Toggle game sound on/off
   const toggleSound = () => setSoundOn((prev) => !prev);
 
+  // Generate the game grid with food and snake cells
   const board = useMemo(() => {
     if (!snakeState.length) return null;
     const grid = [];
@@ -298,6 +317,7 @@ const SnakeGame = () => {
     return grid;
   }, [snakeState, foodState, isGameOver, boardSize]);
 
+  // Render game layout
   return (
     <div className="snake-container">
       <div className="controls-under-header">

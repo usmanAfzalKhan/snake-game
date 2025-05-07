@@ -1,26 +1,42 @@
 /* Footer.css */
 
-/* Main footer container */
+/* 🌐 Main footer container */
 .site-footer {
-  padding: 20px 30px; /* Space inside footer */
-  background-color: #0d0d0d; /* Dark background to match the app theme */
-  display: flex; /* Flexbox layout */
+  padding: 20px 30px; /* Internal spacing */
+  background-color: #0d0d0d; /* Matches dark app theme */
+  display: flex; /* Use flexbox for alignment */
   justify-content: center; /* Center content horizontally */
   align-items: center; /* Center content vertically */
-  border-top: 2px solid #00ff9d; /* Top border in neon green for separation */
-  color: white; /* Text color */
-  font-family: 'Courier New', monospace; /* Retro code-style font */
+  border-top: 2px solid #00ff9d; /* Stylish top border in neon green */
+  color: white; /* Main text color */
+  font-family: "Courier New", monospace; /* Retro coding-style font */
+  font-size: 14px;
+  text-align: center;
+  flex-wrap: wrap; /* Allow line wrap on smaller screens */
 }
 
-/* Footer link (e.g., GitHub profile) */
+/* 🔗 GitHub or external link in the footer */
 .site-footer a {
-  color: #00ff9d; /* Neon green for visibility */
-  text-decoration: none; /* Remove underline */
-  margin-left: 5px; /* Space between text and link */
-  transition: color 0.3s ease; /* Smooth color transition on hover */
+  color: #00ff9d; /* Neon green */
+  margin-left: 5px; /* Small gap between text and link */
+  text-decoration: none; /* Remove underline for a clean look */
+  font-weight: bold;
+  transition: color 0.3s ease, transform 0.3s ease; /* Smooth hover animation */
 }
 
-/* Hover effect on footer link */
+/* ✨ Hover effect to make the link pop */
 .site-footer a:hover {
-  color: #4effc9; /* Lighter neon green on hover */
+  color: #4effc9; /* Brighter neon green */
+  transform: scale(1.05); /* Slight zoom for emphasis */
+  text-decoration: underline;
+}
+
+/* 📱 Mobile override for spacing and legibility */
+@media (max-width: 500px) {
+  .site-footer {
+    font-size: 13px;
+    padding: 16px 12px;
+    flex-direction: column;
+    gap: 6px;
+  }
 }

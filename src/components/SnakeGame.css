@@ -1,46 +1,48 @@
-/* SnakeGame.css - Optimized layout with centered canvas, footer visibility, and mobile-friendly */
-
+/* Root reset and no-scroll setup */
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow-x: hidden;
+  overflow: hidden; /* Disable all scrollbars */
   font-family: sans-serif;
   background-color: #121212;
 }
 
-/* Page wrapper for vertical flow and spacing */
+/* Ensure layout always fills screen and footer sticks to bottom */
 .page-wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  overflow: hidden; /* Prevent layout shift or scroll */
 }
 
-/* Main content area for centering game below welcome message */
+/* Main game section — centers content vertically and horizontally */
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start; /* Start under welcome text */
   padding: 20px 10px;
   box-sizing: border-box;
+  overflow: hidden; /* Prevent scrollbars */
 }
 
-/* Container holding the whole game UI */
+/* Snake Game container (includes board + controls) */
 .snake-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
-/* Wrapper for the game board */
+/* Wrapper for grid board */
 .board-wrapper {
   position: relative;
   margin-top: 20px;
 }
 
-/* Game board styled as a CSS grid */
+/* Grid board */
 .board {
   display: grid;
   grid-template-columns: repeat(var(--board-size, 20), var(--cell-size, 20px));
@@ -49,9 +51,10 @@ html, body {
   border: 3px solid goldenrod;
   background-color: #111;
   touch-action: manipulation;
+  overflow: hidden;
 }
 
-/* Individual cell styling */
+/* Each square cell */
 .cell {
   width: var(--cell-size, 20px);
   height: var(--cell-size, 20px);
@@ -61,7 +64,7 @@ html, body {
   position: relative;
 }
 
-/* Checkerboard pattern colors */
+/* Alternating cell background for checkerboard effect */
 .cell.light-cell {
   background-color: #2e7d32;
 }
@@ -70,7 +73,7 @@ html, body {
   background-color: #4caf50;
 }
 
-/* Red snake body styling */
+/* Snake body styling */
 .cell.snake {
   background: linear-gradient(145deg, #ff1744, #f44336);
   border-radius: 4px;
@@ -78,14 +81,14 @@ html, body {
   animation: wiggle 0.2s infinite;
 }
 
-/* Red snake head styling with white border */
+/* Snake head special look */
 .cell.snake-head {
   background-color: #ff1744;
   border: 2px solid white;
   box-sizing: border-box;
 }
 
-/* Emoji face on the snake head */
+/* Snake emoji face */
 .snake-face {
   display: flex;
   flex-direction: column;
@@ -101,7 +104,7 @@ html, body {
   margin-top: -2px;
 }
 
-/* Food (apple emoji) styling */
+/* Apple emoji styling */
 .cell.food {
   background-color: transparent;
   font-size: 16px;
@@ -110,7 +113,7 @@ html, body {
   justify-content: center;
 }
 
-/* Control icons under the header */
+/* Game controls below welcome text */
 .controls-under-header {
   display: flex;
   gap: 12px;
@@ -120,7 +123,7 @@ html, body {
   align-items: center;
 }
 
-/* Pause/Resume/Restart icons */
+/* Buttons: pause, play, restart */
 .control-icon {
   width: 30px;
   height: 30px;
@@ -132,7 +135,7 @@ html, body {
   border: none;
 }
 
-/* Sound toggle button */
+/* Sound icon */
 .sound-toggle {
   font-size: 18px;
   line-height: 1;
@@ -143,14 +146,14 @@ html, body {
   cursor: pointer;
 }
 
-/* Score text styling */
+/* Score display */
 .score-display {
   margin: 10px 0;
   font-size: 16px;
   color: white;
 }
 
-/* Game over overlay message */
+/* Game over text */
 .game-over-message {
   position: absolute;
   top: 45%;
@@ -164,7 +167,7 @@ html, body {
   border-radius: 8px;
 }
 
-/* Snake wiggle animation */
+/* Snake wiggle motion */
 @keyframes wiggle {
   0%, 100% {
     transform: translateY(0);
@@ -174,7 +177,7 @@ html, body {
   }
 }
 
-/* Flash animation for collision effect */
+/* Collision effect flash */
 .board.collision {
   animation: flash 0.2s ease-in-out;
 }
@@ -188,7 +191,18 @@ html, body {
   }
 }
 
-/* Mobile-specific overrides */
+/* Footer always visible and clean */
+footer {
+  text-align: center;
+  padding: 16px 10px;
+  font-size: 14px;
+  color: #ddd;
+  background: #1e1e1e;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Make it mobile friendly */
 @media (max-width: 500px) {
   :root {
     --cell-size: 22px;
@@ -212,13 +226,9 @@ html, body {
   .cell.snake {
     animation: none;
   }
-}
 
-/* Sticky footer */
-footer {
-  text-align: center;
-  padding: 20px 10px;
-  font-size: 14px;
-  color: white;
-  background: #1e1e1e;
+  footer {
+    font-size: 13px;
+    padding: 12px 8px;
+  }
 }
