@@ -228,18 +228,21 @@ const SnakeGame = () => {
       let newFoodCandidate = [0, 0];
       let isOnSnake = true;
     
-      // Generate food until it's not on the snake
+      // Predefine the test function outside the loop
+      const isOccupied = ([r, c]) => r === newFoodCandidate[0] && c === newFoodCandidate[1];
+    
       while (isOnSnake) {
         newFoodCandidate = [
           Math.floor(Math.random() * boardSize),
           Math.floor(Math.random() * boardSize),
         ];
-        isOnSnake = newSnake.some(([r, c]) => r === newFoodCandidate[0] && c === newFoodCandidate[1]);
+        isOnSnake = newSnake.some(isOccupied);
       }
     
       foodRef.current = newFoodCandidate;
       setFoodState(newFoodCandidate);
     }
+    
     
   }, [soundOn, score, boardSize, isOpposite]);
 
