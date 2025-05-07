@@ -215,7 +215,6 @@ const SnakeGame = () => {
 
   return (
     <div className="snake-container">
-      <h2 style={{ marginBottom: '5px' }}>Welcome to Snake Game</h2>
       <div className="controls-under-header" style={{ marginBottom: '2px' }}>
         <img
           src={isRunning ? pauseIcon : resumeIcon}

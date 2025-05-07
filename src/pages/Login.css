@@ -1,46 +1,83 @@
-/* src/pages/Login.css */
+/* Login.css */
+
 .login-container {
     max-width: 400px;
-    margin: 80px auto;
+    margin: 60px auto;
     padding: 30px;
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.4); /* translucent dark */
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    color: #f4f4f4;
     text-align: center;
-    box-shadow: 0 0 10px #00ff9d;
-    color: white;
   }
   
-  .login-container input {
-    width: 90%;
-    margin: 10px 0;
-    padding: 10px;
+  .login-form input {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin: 15px 0;
     border: none;
-    border-radius: 6px;
-    font-size: 1rem;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #f4f4f4;
+    font-size: 16px;
   }
   
-  .login-container button {
-    padding: 10px 20px;
-    background-color: #00ff9d;
+  .login-form input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+  
+  .login-form button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
     border: none;
-    border-radius: 6px;
-    font-weight: bold;
+    border-radius: 8px;
+    background-color: #0b3d2e;
+    color: #f4f4f4;
+    font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.2s ease;
   }
   
-  .login-container button:hover {
-    background-color: #17ffa3;
+  .login-form button:hover {
+    background-color: #0a2f24;
   }
   
-  .login-container span {
-    color: #00ff9d;
+  .login-container p {
+    margin-top: 20px;
+    color: #ccc;
+    font-size: 15px;
+  }
+  
+  .login-container p span {
+    color: #fdd835; /* bright yellow */
+    font-weight: 600;
     cursor: pointer;
-    font-weight: bold;
+    transition: color 0.2s ease;
   }
   
-  .error {
-    color: #ff4d4d;
-    font-size: 0.9rem;
+  .login-container p span:hover {
+    color: #fff176; /* lighter yellow on hover */
+  }
+  
+  /* 🎮 Get Started button */
+  .get-started-btn {
+    margin-top: 25px;
+    padding: 14px 24px;
+    font-size: 17px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    background-color: #fdd835;
+    color: #222;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .get-started-btn:hover {
+    background-color: #fff176;
+    transform: scale(1.04);
   }
   

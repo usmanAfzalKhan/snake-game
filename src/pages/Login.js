@@ -1,81 +1,128 @@
-// src/pages/Login.js
 import React, { useState } from 'react';
-import { auth } from '../firebase';
-import { db } from '../firebase';
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth, db } from '../firebase';
+import { setDoc, doc, getDocs, query, where, collection } from 'firebase/firestore';
 import './Login.css';
 
 const Login = () => {
-  const [isRegistering, setIsRegistering] = useState(false);
+  const [started, setStarted] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
   const [error, setError] = useState('');
+
+  const saveNewUser = async (user) => {
+    const userRef = doc(db, 'users', user.uid);
+    await setDoc(userRef, {
+      name,
+      username,
+      email: user.email,
+    }, { merge: true });
+  };
+
+  const isUsernameTaken = async (desiredUsername) => {
+    const q = query(collection(db, 'users'), where('username', '==', desiredUsername));
+    const snapshot = await getDocs(q);
+    return !snapshot.empty;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-  
+
     try {
+      let userCredential;
+
       if (isRegistering) {
-        const userCred = await createUserWithEmailAndPassword(auth, email, password);
-  
-        await setDoc(doc(db, 'users', userCred.user.uid), {
-          uid: userCred.user.uid,
-          name: name,
-          email: email,
-          createdAt: new Date(),
-        });
+        if (!name || !username) {
+          setError('Please enter both name and username.');
+          return;
+        }
+
+        const taken = await isUsernameTaken(username);
+        if (taken) {
+          setError('Username is already taken. Please choose another.');
+          return;
+        }
+
+        userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await saveNewUser(userCredential.user);
       } else {
-        await signInWithEmailAndPassword(auth, email, password);
+        userCredential = await signInWithEmailAndPassword(auth, email, password);
       }
     } catch (err) {
-      console.error('Login/Register error:', err);
-      setError(err.message);
+      if (err.code === 'auth/email-already-in-use' && isRegistering) {
+        setIsRegistering(false);
+        setError('That email is already registered. Switching to login...');
+      } else if (err.code === 'auth/wrong-password') {
+        setError('Incorrect password.');
+      } else if (err.code === 'auth/user-not-found') {
+        setError('No account found. Please register.');
+      } else {
+        setError(err.message);
+      }
     }
   };
-  
 
   return (
     <div className="login-container">
-      <h2>{isRegistering ? 'Sign Up' : 'Login'}</h2>
-      <form onSubmit={handleSubmit}>
-        {isRegistering && (
-          <input
-            type="text"
-            placeholder="Full Name"
-            value={name}
-            required
-            onChange={(e) => setName(e.target.value)}
-          />
-        )}
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          required
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          required
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {error && <p className="error">{error}</p>}
-        <button type="submit">{isRegistering ? 'Sign Up' : 'Login'}</button>
-      </form>
-      <p>
-        {isRegistering ? 'Already have an account?' : 'Don’t have an account?'}{' '}
-        <span onClick={() => setIsRegistering(!isRegistering)}>
-          {isRegistering ? 'Login' : 'Sign Up'}
-        </span>
-      </p>
+      {!started ? (
+        <>
+          <h2>🎮 Welcome to Snake World</h2>
+          <p>Climb the leaderboard, break your high score, and track your stats!</p>
+          <button className="get-started-btn" onClick={() => setStarted(true)}>
+            Get Started
+          </button>
+        </>
+      ) : (
+        <>
+          <h2>{isRegistering ? 'Register' : 'Login'}</h2>
+          <form onSubmit={handleSubmit} className="login-form">
+            {isRegistering && (
+              <>
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Username (unique)"
+                  value={username}
+                  onChange={e => setUsername(e.target.value.toLowerCase().replace(/\s/g, ''))}
+                  required
+                />
+              </>
+            )}
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+            />
+            <button type="submit">{isRegistering ? 'Register' : 'Login'}</button>
+          </form>
+          <p>
+            {isRegistering ? 'Already have an account? ' : "Don't have an account? "}
+            <span onClick={() => setIsRegistering(!isRegistering)}>
+              {isRegistering ? 'Login here' : 'Register here'}
+            </span>
+          </p>
+          {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
+        </>
+      )}
     </div>
   );
 };
