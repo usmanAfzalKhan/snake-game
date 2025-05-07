@@ -218,14 +218,8 @@ function App() {
                       <h1>Welcome, {userName}</h1>
                       <p>
                         Eat apples, grow your snake, and don’t crash into walls
-                        or yourself! Each game earns you points — try to beat
+                        or yourself! Each game earns you points try to beat
                         your high score and climb the global leaderboard.
-                      </p>
-                      <p>
-                        Use the <strong>↑</strong> <strong>↓</strong>{" "}
-                        <strong>←</strong> <strong>→</strong> arrow keys to
-                        move. On desktop, you can <strong>zoom out</strong>{" "}
-                        (Ctrl + Minus) for better gameplay visibility.
                       </p>
                       <SnakeGame />
                     </div>
