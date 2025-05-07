@@ -1,3 +1,4 @@
+/* Header container: aligns content horizontally and adds bottom border */
 .header {
   padding: 20px 30px;
   background-color: #0d0d0d;
@@ -7,6 +8,7 @@
   border-bottom: 2px solid #00ff9d;
 }
 
+/* Legacy site header block (not used if using .header instead) */
 .site-header {
   display: flex;
   align-items: center;
@@ -16,26 +18,30 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
 
+/* Logo style inside .site-header (if used) */
 .site-logo {
   width: 80px;
   height: 80px;
   object-fit: contain;
   margin-right: 18px;
   transition: transform 0.3s ease, filter 0.3s ease;
-  filter: drop-shadow(0 0 0 transparent);
+  filter: drop-shadow(0 0 0 transparent); /* starts without glow */
 }
 
+/* Glow effect on logo hover */
 .logo-link:hover .site-logo {
-  transform: scale(1.1); /* ← grows slightly */
+  transform: scale(1.1);
   filter: drop-shadow(0 0 5px #00ff9d);
 }
 
+/* Title style in legacy header */
 .site-title {
   font-size: 1.8rem;
   font-weight: bold;
   font-family: 'Courier New', monospace;
 }
 
+/* Main header styling (same as earlier block for layout) */
 .header {
   padding: 20px 30px;
   display: flex;
@@ -43,6 +49,7 @@
   align-items: center;
 }
 
+/* Content wrapper inside header: spacing for logo and menu */
 .header-content {
   width: 100%;
   display: flex;
@@ -50,16 +57,19 @@
   align-items: center;
 }
 
+/* Logo image style */
 .logo {
   height: 60px;
   cursor: pointer;
   transition: transform 0.3s ease;
 }
 
+/* Slight zoom effect on hover */
 .logo:hover {
   transform: scale(1.1);
 }
 
+/* Logout button style (not currently visible unless added) */
 .logout-button {
   padding: 8px 16px;
   font-weight: bold;
@@ -71,11 +81,13 @@
   color: #000;
 }
 
+/* Hover style for logout button */
 .logout-button:hover {
   background-color: #1effbe;
   transform: scale(1.1);
 }
 
+/* Container for username and dropdown */
 .user-menu-container {
   position: relative;
   font-weight: 600;
@@ -86,6 +98,7 @@
   transition: color 0.2s ease;
 }
 
+/* Toggle element that displays username */
 .user-toggle {
   user-select: none;
   padding: 8px 14px;
@@ -94,11 +107,13 @@
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
+/* Hover effect for toggle */
 .user-toggle:hover {
   background-color: rgba(0, 255, 157, 0.25);
   transform: scale(1.05);
 }
 
+/* Dropdown menu when username is clicked */
 .user-dropdown {
   position: absolute;
   right: 0;
@@ -112,6 +127,7 @@
   overflow: hidden;
 }
 
+/* Buttons inside dropdown */
 .user-dropdown button {
   display: block;
   width: 100%;
@@ -125,6 +141,25 @@
   transition: background-color 0.2s ease;
 }
 
+/* Hover effect on dropdown buttons */
 .user-dropdown button:hover {
   background-color: rgba(0, 255, 157, 0.1);
+}
+
+/* Animation that makes the logo glow briefly */
+@keyframes logoGlow {
+  0% {
+    filter: drop-shadow(0 0 0px #00ff9d);
+  }
+  50% {
+    filter: drop-shadow(0 0 8px #00ff9d);
+  }
+  100% {
+    filter: drop-shadow(0 0 0px #00ff9d);
+  }
+}
+
+/* Class added when logo is clicked to trigger glow animation */
+.logo.clicked {
+  animation: logoGlow 0.6s ease-in-out;
 }

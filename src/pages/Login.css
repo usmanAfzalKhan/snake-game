@@ -1,16 +1,16 @@
-/* Login.css */
-
+/* Container for the login/register box */
 .login-container {
-    max-width: 400px;
-    margin: 60px auto;
-    padding: 30px;
-    background: rgba(0, 0, 0, 0.4); /* translucent dark */
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    color: #f4f4f4;
+    max-width: 400px; /* Limits width to keep it compact */
+    margin: 60px auto; /* Centered vertically with top/bottom margin */
+    padding: 30px; /* Inner spacing */
+    background: rgba(0, 0, 0, 0.4); /* Semi-transparent dark background */
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); /* Subtle shadow for depth */
+    color: #f4f4f4; /* Light text color */
     text-align: center;
   }
   
+  /* Styles for all form input fields */
   .login-form input {
     display: block;
     width: 100%;
@@ -18,50 +18,56 @@
     margin: 15px 0;
     border: none;
     border-radius: 8px;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.1); /* Light overlay */
     color: #f4f4f4;
     font-size: 16px;
   }
   
+  /* Style for the placeholder text inside inputs */
   .login-form input::placeholder {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.6); /* Lighter text for placeholder */
   }
   
+  /* Style for the form submit button */
   .login-form button {
     width: 100%;
     padding: 12px;
     margin-top: 10px;
     border: none;
     border-radius: 8px;
-    background-color: #0b3d2e;
+    background-color: #0b3d2e; /* Deep green */
     color: #f4f4f4;
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.2s ease;
   }
   
+  /* Hover effect for submit button */
   .login-form button:hover {
-    background-color: #0a2f24;
+    background-color: #0a2f24; /* Slightly darker green on hover */
   }
   
+  /* Paragraphs below forms (links and messages) */
   .login-container p {
     margin-top: 20px;
     color: #ccc;
     font-size: 15px;
   }
   
+  /* Highlighted text spans (e.g. "Register here") */
   .login-container p span {
-    color: #fdd835; /* bright yellow */
+    color: #fdd835; /* Bright yellow for action text */
     font-weight: 600;
     cursor: pointer;
     transition: color 0.2s ease;
   }
   
+  /* Lighter yellow on hover to show interactivity */
   .login-container p span:hover {
-    color: #fff176; /* lighter yellow on hover */
+    color: #fff176;
   }
   
-  /* 🎮 Get Started button */
+  /* 🎮 "Get Started" button shown before login screen */
   .get-started-btn {
     margin-top: 25px;
     padding: 14px 24px;
@@ -69,15 +75,16 @@
     font-weight: bold;
     border: none;
     border-radius: 10px;
-    background-color: #fdd835;
-    color: #222;
+    background-color: #fdd835; /* Yellow */
+    color: #222; /* Dark text */
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Adds depth */
   }
   
+  /* Hover effect for Get Started button */
   .get-started-btn:hover {
-    background-color: #fff176;
-    transform: scale(1.04);
+    background-color: #fff176; /* Lighter yellow */
+    transform: scale(1.04); /* Slight grow effect */
   }
   

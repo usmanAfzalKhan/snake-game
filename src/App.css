@@ -1,36 +1,41 @@
-/* Reset & base */
+/* Reset default browser styling and define core layout */
 body {
   margin: 0;
   padding: 0;
-  background-image: url('./images/background.png');
+  background-image: url('./images/background.png'); /* Pixel background */
   background-repeat: repeat;
-  background-size: 128px 128px;
-  background-color: #0d0d0d;
+  background-size: 128px 128px; /* Blocky, game-style tiling */
+  background-color: #0d0d0d; /* Fallback dark base */
   color: white;
-  font-family: 'Courier New', monospace;
-  image-rendering: pixelated;
+  font-family: 'Courier New', monospace; /* Retro coding aesthetic */
+  image-rendering: pixelated; /* Emphasize low-res effect */
 }
 
+/* Ensure full height for flex layout */
 html, body, #root {
   height: 100%;
   margin: 0;
 }
 
+/* Container wraps the entire app and aligns footer to bottom */
 .app-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
+/* Main content will grow and push footer down */
 .main-content {
   flex: 1;
 }
 
+/* Central content styling */
 .game-container {
   text-align: center;
   margin-top: 50px;
 }
 
+/* Basic toggle button (e.g., dropdowns) */
 .toggle-btn {
   background-color: #222;
   color: #fff;
@@ -40,10 +45,12 @@ html, body, #root {
   cursor: pointer;
 }
 
+/* Styling for dropdown/menu containers */
 .menu-options {
   min-width: 140px;
 }
 
+/* Individual items in a dropdown */
 .menu-item {
   background: none;
   border: none;
@@ -55,5 +62,45 @@ html, body, #root {
 }
 
 .menu-item:hover {
-  background-color: #f0f0f0;
+  background-color: #f0f0f0; /* Light hover effect */
+}
+
+/* Email verification UI block */
+.verification-message {
+  text-align: center;
+  margin-top: 60px;
+  padding: 30px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid #00ff9d; /* Neon border */
+  border-radius: 12px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 0 12px rgba(0, 255, 157, 0.2); /* Soft glow */
+}
+
+/* Button for resending email verification */
+.resend-btn {
+  padding: 10px 20px;
+  background-color: #00ff9d; /* Bright green */
+  color: #000;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+/* Disabled state for resend */
+.resend-btn:disabled {
+  background-color: #555;
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Hover feedback for resend button */
+.resend-btn:hover {
+  background-color: #1effbe;
+  transform: scale(1.05);
 }

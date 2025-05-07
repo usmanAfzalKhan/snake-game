@@ -1,23 +1,26 @@
+/* Footer.css */
+
+/* Main footer container */
 .site-footer {
-    padding: 20px 30px;
-    background-color: #0d0d0d;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-top: 2px solid #00ff9d;
-    color: white;
-    font-family: 'Courier New', monospace;
-  }
-  
-  
-  .site-footer a {
-    color: #00ff9d;
-    text-decoration: none;
-    margin-left: 5px;
-    transition: color 0.3s ease;
-  }
-  
-  .site-footer a:hover {
-    color: #4effc9;
-  }
-  
+  padding: 20px 30px; /* Space inside footer */
+  background-color: #0d0d0d; /* Dark background to match the app theme */
+  display: flex; /* Flexbox layout */
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+  border-top: 2px solid #00ff9d; /* Top border in neon green for separation */
+  color: white; /* Text color */
+  font-family: 'Courier New', monospace; /* Retro code-style font */
+}
+
+/* Footer link (e.g., GitHub profile) */
+.site-footer a {
+  color: #00ff9d; /* Neon green for visibility */
+  text-decoration: none; /* Remove underline */
+  margin-left: 5px; /* Space between text and link */
+  transition: color 0.3s ease; /* Smooth color transition on hover */
+}
+
+/* Hover effect on footer link */
+.site-footer a:hover {
+  color: #4effc9; /* Lighter neon green on hover */
+}

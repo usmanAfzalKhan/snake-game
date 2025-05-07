@@ -1,66 +1,77 @@
+/* Container for the entire stats page */
 .stats-page {
-    max-width: 700px;
-    margin: 40px auto;
-    padding: 30px;
-    background-color: rgba(0, 0, 0, 0.4);
-    border-radius: 15px;
-    box-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
-    color: #f4f4f4;
-    text-align: center;
-    font-family: 'Courier New', monospace;
+    max-width: 700px; /* Maximum width of the content */
+    margin: 40px auto; /* Center it horizontally with top/bottom spacing */
+    padding: 30px; /* Inner spacing */
+    background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent dark background */
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 0 0 10px rgba(0, 255, 157, 0.3); /* Glowing shadow for visual appeal */
+    color: #f4f4f4; /* Light text color */
+    text-align: center; /* Center-align text */
+    font-family: 'Courier New', monospace; /* Retro terminal-style font */
   }
   
+  /* Styling for section titles (Stats for, Global Leaderboard) */
   .stats-page h2 {
     margin-bottom: 20px;
-    color: #00ff9d;
+    color: #00ff9d; /* Bright green for headings */
   }
   
+  /* Card that holds personal stats (games played, average, highest) */
   .stats-card {
-    background-color: rgba(0, 0, 0, 0.25);
-    border: 1px solid #00ff9d;
+    background-color: rgba(0, 0, 0, 0.25); /* Darker box with transparency */
+    border: 1px solid #00ff9d; /* Highlighted border */
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 30px;
-    text-align: left;
+    text-align: left; /* Align text to left for readability */
   }
   
+  /* Text styling inside the stats card */
   .stats-card p {
     margin: 10px 0;
     font-size: 16px;
   }
   
+  /* Enables horizontal scrolling for the leaderboard table if needed */
   .leaderboard-table {
     overflow-x: auto;
   }
   
+  /* Table styles for leaderboard */
   table {
-    width: 100%;
+    width: 100%; /* Full width */
     border-collapse: collapse;
     margin-top: 10px;
   }
   
+  /* Header row of the leaderboard */
   thead {
-    background-color: rgba(0, 255, 157, 0.2);
+    background-color: rgba(0, 255, 157, 0.2); /* Light green background */
   }
   
+  /* General cell styles */
   th, td {
     padding: 12px 16px;
     text-align: left;
     font-size: 15px;
   }
   
+  /* Each row's default style */
   tbody tr {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    transition: background-color 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border between rows */
+    transition: background-color 0.2s ease; /* Smooth hover effect */
   }
   
+  /* Highlight row when hovered */
   tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.05); /* Light hover background */
   }
   
+  /* Highlight style for the current user */
   .highlight-row {
-    background-color: rgba(255, 255, 0, 0.15);
+    background-color: rgba(255, 255, 0, 0.15); /* Light yellow background */
     font-weight: bold;
-    color: #ffff88;
+    color: #ffff88; /* Bright yellow text */
   }
   
